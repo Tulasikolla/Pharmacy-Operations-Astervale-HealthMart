@@ -1,0 +1,1662 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: AsterVale HealthMart Pharmacy Operations Platform API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: auth
+    description: Authentication
+  - name: stores
+    description: Store management
+  - name: medicines
+    description: Medicine catalog
+  - name: batches
+    description: Batch tracking
+  - name: inventory
+    description: Inventory management
+  - name: sales
+    description: Sales processing
+  - name: purchases
+    description: Purchase orders
+  - name: suppliers
+    description: Supplier management
+  - name: analytics
+    description: Business intelligence
+  - name: ai
+    description: AI intelligence features
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  # AUTH
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginBody"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout user
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # STORES
+  /stores:
+    get:
+      operationId: listStores
+      tags: [stores]
+      summary: List all stores
+      responses:
+        "200":
+          description: List of stores
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Store"
+    post:
+      operationId: createStore
+      tags: [stores]
+      summary: Create a store
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateStoreBody"
+      responses:
+        "201":
+          description: Store created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Store"
+
+  /stores/{storeId}:
+    get:
+      operationId: getStore
+      tags: [stores]
+      summary: Get store by ID
+      parameters:
+        - name: storeId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Store"
+    put:
+      operationId: updateStore
+      tags: [stores]
+      summary: Update store
+      parameters:
+        - name: storeId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateStoreBody"
+      responses:
+        "200":
+          description: Updated store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Store"
+
+  # MEDICINES
+  /medicines:
+    get:
+      operationId: listMedicines
+      tags: [medicines]
+      summary: List medicines
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: category
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of medicines
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Medicine"
+    post:
+      operationId: createMedicine
+      tags: [medicines]
+      summary: Create medicine
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMedicineBody"
+      responses:
+        "201":
+          description: Medicine created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Medicine"
+
+  /medicines/{medicineId}:
+    get:
+      operationId: getMedicine
+      tags: [medicines]
+      summary: Get medicine
+      parameters:
+        - name: medicineId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Medicine
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Medicine"
+    put:
+      operationId: updateMedicine
+      tags: [medicines]
+      summary: Update medicine
+      parameters:
+        - name: medicineId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMedicineBody"
+      responses:
+        "200":
+          description: Updated medicine
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Medicine"
+
+  # BATCHES
+  /batches:
+    get:
+      operationId: listBatches
+      tags: [batches]
+      summary: List batches
+      parameters:
+        - name: medicineId
+          in: query
+          schema:
+            type: integer
+        - name: storeId
+          in: query
+          schema:
+            type: integer
+        - name: expiringWithinDays
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of batches
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Batch"
+    post:
+      operationId: createBatch
+      tags: [batches]
+      summary: Create batch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBatchBody"
+      responses:
+        "201":
+          description: Batch created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Batch"
+
+  /batches/{batchId}:
+    get:
+      operationId: getBatch
+      tags: [batches]
+      summary: Get batch
+      parameters:
+        - name: batchId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Batch
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Batch"
+
+  # INVENTORY
+  /inventory:
+    get:
+      operationId: listInventory
+      tags: [inventory]
+      summary: List inventory
+      parameters:
+        - name: storeId
+          in: query
+          schema:
+            type: integer
+        - name: lowStock
+          in: query
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Inventory items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/InventoryItem"
+
+  /inventory/adjust:
+    post:
+      operationId: adjustInventory
+      tags: [inventory]
+      summary: Adjust stock quantity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdjustInventoryBody"
+      responses:
+        "200":
+          description: Adjusted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InventoryItem"
+
+  /inventory/transfer:
+    post:
+      operationId: transferStock
+      tags: [inventory]
+      summary: Transfer stock between stores
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransferStockBody"
+      responses:
+        "200":
+          description: Transfer successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  # SALES
+  /sales:
+    get:
+      operationId: listSales
+      tags: [sales]
+      summary: List sales
+      parameters:
+        - name: storeId
+          in: query
+          schema:
+            type: integer
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        "200":
+          description: Sales list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Sale"
+    post:
+      operationId: createSale
+      tags: [sales]
+      summary: Create sale (process checkout)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSaleBody"
+      responses:
+        "201":
+          description: Sale created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Sale"
+
+  /sales/{saleId}:
+    get:
+      operationId: getSale
+      tags: [sales]
+      summary: Get sale details with items
+      parameters:
+        - name: saleId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Sale detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SaleDetail"
+
+  # SUPPLIERS
+  /suppliers:
+    get:
+      operationId: listSuppliers
+      tags: [suppliers]
+      summary: List suppliers
+      responses:
+        "200":
+          description: Suppliers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Supplier"
+    post:
+      operationId: createSupplier
+      tags: [suppliers]
+      summary: Create supplier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSupplierBody"
+      responses:
+        "201":
+          description: Supplier created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Supplier"
+
+  /suppliers/{supplierId}:
+    get:
+      operationId: getSupplier
+      tags: [suppliers]
+      summary: Get supplier
+      parameters:
+        - name: supplierId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Supplier
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Supplier"
+    put:
+      operationId: updateSupplier
+      tags: [suppliers]
+      summary: Update supplier
+      parameters:
+        - name: supplierId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSupplierBody"
+      responses:
+        "200":
+          description: Updated supplier
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Supplier"
+
+  # PURCHASES
+  /purchases:
+    get:
+      operationId: listPurchases
+      tags: [purchases]
+      summary: List purchase orders
+      parameters:
+        - name: storeId
+          in: query
+          schema:
+            type: integer
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, received, cancelled]
+      responses:
+        "200":
+          description: Purchase orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Purchase"
+    post:
+      operationId: createPurchase
+      tags: [purchases]
+      summary: Create purchase order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePurchaseBody"
+      responses:
+        "201":
+          description: Purchase order created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Purchase"
+
+  /purchases/{purchaseId}:
+    get:
+      operationId: getPurchase
+      tags: [purchases]
+      summary: Get purchase order
+      parameters:
+        - name: purchaseId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Purchase order
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Purchase"
+
+  /purchases/{purchaseId}/receive:
+    post:
+      operationId: receivePurchase
+      tags: [purchases]
+      summary: Mark purchase order as received (goods receipt)
+      parameters:
+        - name: purchaseId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Purchase received
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Purchase"
+
+  # ANALYTICS
+  /analytics/dashboard:
+    get:
+      operationId: getDashboard
+      tags: [analytics]
+      summary: Get dashboard summary stats
+      parameters:
+        - name: storeId
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Dashboard data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
+  /analytics/sales-trend:
+    get:
+      operationId: getSalesTrend
+      tags: [analytics]
+      summary: Get sales trend data
+      parameters:
+        - name: storeId
+          in: query
+          schema:
+            type: integer
+        - name: days
+          in: query
+          schema:
+            type: integer
+            default: 30
+      responses:
+        "200":
+          description: Sales trend
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SalesTrendPoint"
+
+  /analytics/top-medicines:
+    get:
+      operationId: getTopMedicines
+      tags: [analytics]
+      summary: Get top selling medicines
+      parameters:
+        - name: storeId
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: Top medicines
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TopMedicine"
+
+  /analytics/store-performance:
+    get:
+      operationId: getStorePerformance
+      tags: [analytics]
+      summary: Get performance metrics for all stores
+      responses:
+        "200":
+          description: Store performance
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StorePerformance"
+
+  /analytics/expiry-alerts:
+    get:
+      operationId: getExpiryAlerts
+      tags: [analytics]
+      summary: Get medicines expiring soon
+      parameters:
+        - name: storeId
+          in: query
+          schema:
+            type: integer
+        - name: days
+          in: query
+          schema:
+            type: integer
+            default: 90
+      responses:
+        "200":
+          description: Expiry alerts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ExpiryAlert"
+
+  /analytics/inventory-turnover:
+    get:
+      operationId: getInventoryTurnover
+      tags: [analytics]
+      summary: Get inventory turnover metrics
+      parameters:
+        - name: storeId
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Turnover metrics
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TurnoverMetric"
+
+  # AI
+  /ai/query:
+    post:
+      operationId: aiQuery
+      tags: [ai]
+      summary: Natural language query (conversational analytics)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AiQueryBody"
+      responses:
+        "200":
+          description: AI query result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiQueryResponse"
+
+  /ai/replenishment:
+    get:
+      operationId: getReplenishmentSuggestions
+      tags: [ai]
+      summary: Get AI replenishment suggestions
+      parameters:
+        - name: storeId
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Replenishment suggestions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ReplenishmentSuggestion"
+
+  /ai/anomalies:
+    get:
+      operationId: getAnomalies
+      tags: [ai]
+      summary: Get detected anomalies
+      parameters:
+        - name: storeId
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Anomaly alerts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AnomalyAlert"
+
+  # USERS (admin)
+  /users:
+    get:
+      operationId: listUsers
+      tags: [auth]
+      summary: List users (admin)
+      responses:
+        "200":
+          description: Users list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+    post:
+      operationId: createUser
+      tags: [auth]
+      summary: Create user (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserBody"
+      responses:
+        "201":
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /users/{userId}:
+    put:
+      operationId: updateUser
+      tags: [auth]
+      summary: Update user (admin)
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserBody"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    delete:
+      operationId: deleteUser
+      tags: [auth]
+      summary: Delete user (admin)
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /audit-logs:
+    get:
+      operationId: listAuditLogs
+      tags: [auth]
+      summary: Get audit logs (admin)
+      parameters:
+        - name: userId
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 100
+      responses:
+        "200":
+          description: Audit logs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AuditLog"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required: [status]
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required: [error]
+
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required: [message]
+
+    LoginBody:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required: [email, password]
+
+    LoginResponse:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        token:
+          type: string
+      required: [user, token]
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum: [admin, pharmacist, inventory_staff, regional_supervisor]
+        storeId:
+          type: integer
+          nullable: true
+        storeName:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, name, email, role, createdAt]
+
+    CreateUserBody:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        role:
+          type: string
+          enum: [admin, pharmacist, inventory_staff, regional_supervisor]
+        storeId:
+          type: integer
+          nullable: true
+      required: [name, email, password, role]
+
+    UpdateUserBody:
+      type: object
+      properties:
+        name:
+          type: string
+        role:
+          type: string
+          enum: [admin, pharmacist, inventory_staff, regional_supervisor]
+        storeId:
+          type: integer
+          nullable: true
+
+    Store:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        location:
+          type: string
+        city:
+          type: string
+        phone:
+          type: string
+          nullable: true
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, name, location, city, isActive, createdAt]
+
+    CreateStoreBody:
+      type: object
+      properties:
+        name:
+          type: string
+        location:
+          type: string
+        city:
+          type: string
+        phone:
+          type: string
+      required: [name, location, city]
+
+    Medicine:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        genericName:
+          type: string
+          nullable: true
+        manufacturer:
+          type: string
+        category:
+          type: string
+        unitPrice:
+          type: number
+        unit:
+          type: string
+        requiresPrescription:
+          type: boolean
+        description:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, name, manufacturer, category, unitPrice, unit, requiresPrescription, createdAt]
+
+    CreateMedicineBody:
+      type: object
+      properties:
+        name:
+          type: string
+        genericName:
+          type: string
+        manufacturer:
+          type: string
+        category:
+          type: string
+        unitPrice:
+          type: number
+        unit:
+          type: string
+        requiresPrescription:
+          type: boolean
+        description:
+          type: string
+      required: [name, manufacturer, category, unitPrice, unit, requiresPrescription]
+
+    Batch:
+      type: object
+      properties:
+        id:
+          type: integer
+        medicineId:
+          type: integer
+        medicineName:
+          type: string
+        batchNumber:
+          type: string
+        expiryDate:
+          type: string
+          format: date
+        purchasePrice:
+          type: number
+        quantity:
+          type: integer
+        storeId:
+          type: integer
+          nullable: true
+        storeName:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, medicineId, medicineName, batchNumber, expiryDate, purchasePrice, quantity, createdAt]
+
+    CreateBatchBody:
+      type: object
+      properties:
+        medicineId:
+          type: integer
+        batchNumber:
+          type: string
+        expiryDate:
+          type: string
+          format: date
+        purchasePrice:
+          type: number
+        quantity:
+          type: integer
+        storeId:
+          type: integer
+      required: [medicineId, batchNumber, expiryDate, purchasePrice, quantity, storeId]
+
+    InventoryItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        batchId:
+          type: integer
+        storeId:
+          type: integer
+        storeName:
+          type: string
+        medicineId:
+          type: integer
+        medicineName:
+          type: string
+        batchNumber:
+          type: string
+        expiryDate:
+          type: string
+          format: date
+        quantity:
+          type: integer
+        unitPrice:
+          type: number
+        purchasePrice:
+          type: number
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, batchId, storeId, storeName, medicineId, medicineName, batchNumber, expiryDate, quantity, unitPrice, purchasePrice, updatedAt]
+
+    AdjustInventoryBody:
+      type: object
+      properties:
+        batchId:
+          type: integer
+        storeId:
+          type: integer
+        quantityChange:
+          type: integer
+        reason:
+          type: string
+      required: [batchId, storeId, quantityChange, reason]
+
+    TransferStockBody:
+      type: object
+      properties:
+        batchId:
+          type: integer
+        fromStoreId:
+          type: integer
+        toStoreId:
+          type: integer
+        quantity:
+          type: integer
+      required: [batchId, fromStoreId, toStoreId, quantity]
+
+    SaleItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        saleId:
+          type: integer
+        batchId:
+          type: integer
+        medicineName:
+          type: string
+        batchNumber:
+          type: string
+        quantity:
+          type: integer
+        unitPrice:
+          type: number
+        discount:
+          type: number
+        total:
+          type: number
+      required: [id, saleId, batchId, medicineName, batchNumber, quantity, unitPrice, discount, total]
+
+    Sale:
+      type: object
+      properties:
+        id:
+          type: integer
+        storeId:
+          type: integer
+        storeName:
+          type: string
+        userId:
+          type: integer
+        userName:
+          type: string
+        customerName:
+          type: string
+          nullable: true
+        saleType:
+          type: string
+          enum: [prescription, otc]
+        prescriptionNumber:
+          type: string
+          nullable: true
+        subtotal:
+          type: number
+        taxAmount:
+          type: number
+        discountAmount:
+          type: number
+        totalAmount:
+          type: number
+        status:
+          type: string
+          enum: [completed, refunded, void]
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, storeId, storeName, userId, userName, saleType, subtotal, taxAmount, discountAmount, totalAmount, status, createdAt]
+
+    SaleDetail:
+      allOf:
+        - $ref: "#/components/schemas/Sale"
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/SaleItem"
+          required: [items]
+
+    CreateSaleBody:
+      type: object
+      properties:
+        storeId:
+          type: integer
+        customerName:
+          type: string
+        saleType:
+          type: string
+          enum: [prescription, otc]
+        prescriptionNumber:
+          type: string
+        taxRate:
+          type: number
+          default: 0.18
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              batchId:
+                type: integer
+              quantity:
+                type: integer
+              discount:
+                type: number
+                default: 0
+            required: [batchId, quantity]
+      required: [storeId, saleType, items]
+
+    Supplier:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        contactPerson:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+        phone:
+          type: string
+          nullable: true
+        address:
+          type: string
+          nullable: true
+        city:
+          type: string
+          nullable: true
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, name, isActive, createdAt]
+
+    CreateSupplierBody:
+      type: object
+      properties:
+        name:
+          type: string
+        contactPerson:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+      required: [name]
+
+    PurchaseItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        purchaseId:
+          type: integer
+        medicineId:
+          type: integer
+        medicineName:
+          type: string
+        quantity:
+          type: integer
+        unitCost:
+          type: number
+        total:
+          type: number
+      required: [id, purchaseId, medicineId, medicineName, quantity, unitCost, total]
+
+    Purchase:
+      type: object
+      properties:
+        id:
+          type: integer
+        storeId:
+          type: integer
+        storeName:
+          type: string
+        supplierId:
+          type: integer
+        supplierName:
+          type: string
+        orderDate:
+          type: string
+          format: date-time
+        expectedDelivery:
+          type: string
+          format: date
+          nullable: true
+        status:
+          type: string
+          enum: [pending, received, cancelled]
+        totalAmount:
+          type: number
+        notes:
+          type: string
+          nullable: true
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/PurchaseItem"
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, storeId, storeName, supplierId, supplierName, orderDate, status, totalAmount, items, createdAt]
+
+    CreatePurchaseBody:
+      type: object
+      properties:
+        storeId:
+          type: integer
+        supplierId:
+          type: integer
+        expectedDelivery:
+          type: string
+          format: date
+        notes:
+          type: string
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              medicineId:
+                type: integer
+              quantity:
+                type: integer
+              unitCost:
+                type: number
+            required: [medicineId, quantity, unitCost]
+      required: [storeId, supplierId, items]
+
+    DashboardSummary:
+      type: object
+      properties:
+        todayRevenue:
+          type: number
+        todaySales:
+          type: integer
+        lowStockItems:
+          type: integer
+        expiringBatches:
+          type: integer
+        pendingOrders:
+          type: integer
+        monthRevenue:
+          type: number
+        totalMedicines:
+          type: integer
+        totalStores:
+          type: integer
+        recentSales:
+          type: array
+          items:
+            $ref: "#/components/schemas/Sale"
+        alerts:
+          type: array
+          items:
+            $ref: "#/components/schemas/DashboardAlert"
+      required: [todayRevenue, todaySales, lowStockItems, expiringBatches, pendingOrders, monthRevenue, totalMedicines, totalStores, recentSales, alerts]
+
+    DashboardAlert:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [expiry, low_stock, anomaly, reorder]
+        message:
+          type: string
+        severity:
+          type: string
+          enum: [info, warning, critical]
+        storeId:
+          type: integer
+          nullable: true
+        medicineId:
+          type: integer
+          nullable: true
+      required: [type, message, severity]
+
+    SalesTrendPoint:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        revenue:
+          type: number
+        transactions:
+          type: integer
+      required: [date, revenue, transactions]
+
+    TopMedicine:
+      type: object
+      properties:
+        medicineId:
+          type: integer
+        medicineName:
+          type: string
+        category:
+          type: string
+        totalSold:
+          type: integer
+        totalRevenue:
+          type: number
+        rank:
+          type: integer
+      required: [medicineId, medicineName, category, totalSold, totalRevenue, rank]
+
+    StorePerformance:
+      type: object
+      properties:
+        storeId:
+          type: integer
+        storeName:
+          type: string
+        city:
+          type: string
+        monthRevenue:
+          type: number
+        totalTransactions:
+          type: integer
+        avgTransactionValue:
+          type: number
+        lowStockItems:
+          type: integer
+        expiringItems:
+          type: integer
+      required: [storeId, storeName, city, monthRevenue, totalTransactions, avgTransactionValue, lowStockItems, expiringItems]
+
+    ExpiryAlert:
+      type: object
+      properties:
+        batchId:
+          type: integer
+        batchNumber:
+          type: string
+        medicineId:
+          type: integer
+        medicineName:
+          type: string
+        storeId:
+          type: integer
+        storeName:
+          type: string
+        expiryDate:
+          type: string
+          format: date
+        daysToExpiry:
+          type: integer
+        quantity:
+          type: integer
+        estimatedLoss:
+          type: number
+      required: [batchId, batchNumber, medicineId, medicineName, storeId, storeName, expiryDate, daysToExpiry, quantity, estimatedLoss]
+
+    TurnoverMetric:
+      type: object
+      properties:
+        medicineId:
+          type: integer
+        medicineName:
+          type: string
+        category:
+          type: string
+        avgMonthlySales:
+          type: number
+        currentStock:
+          type: integer
+        turnoverRate:
+          type: number
+        daysOfStock:
+          type: number
+      required: [medicineId, medicineName, category, avgMonthlySales, currentStock, turnoverRate, daysOfStock]
+
+    AiQueryBody:
+      type: object
+      properties:
+        question:
+          type: string
+        storeId:
+          type: integer
+          nullable: true
+      required: [question]
+
+    AiQueryResponse:
+      type: object
+      properties:
+        question:
+          type: string
+        answer:
+          type: string
+        data:
+          type: object
+          nullable: true
+        queryType:
+          type: string
+          enum: [sales, inventory, expiry, performance, replenishment, general]
+      required: [question, answer, queryType]
+
+    ReplenishmentSuggestion:
+      type: object
+      properties:
+        medicineId:
+          type: integer
+        medicineName:
+          type: string
+        storeId:
+          type: integer
+        storeName:
+          type: string
+        currentStock:
+          type: integer
+        suggestedOrderQty:
+          type: integer
+        avgDailySales:
+          type: number
+        daysOfStockLeft:
+          type: number
+        urgency:
+          type: string
+          enum: [low, medium, high, critical]
+        reason:
+          type: string
+      required: [medicineId, medicineName, storeId, storeName, currentStock, suggestedOrderQty, avgDailySales, daysOfStockLeft, urgency, reason]
+
+    AnomalyAlert:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [unusual_discount, stock_drop, unusual_purchase_pattern, high_return_rate]
+        storeId:
+          type: integer
+        storeName:
+          type: string
+        description:
+          type: string
+        severity:
+          type: string
+          enum: [low, medium, high]
+        detectedAt:
+          type: string
+          format: date-time
+        value:
+          type: number
+          nullable: true
+      required: [id, type, storeId, storeName, description, severity, detectedAt]
+
+    AuditLog:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        userName:
+          type: string
+        action:
+          type: string
+        resource:
+          type: string
+        resourceId:
+          type: string
+          nullable: true
+        details:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, userId, userName, action, resource, createdAt]

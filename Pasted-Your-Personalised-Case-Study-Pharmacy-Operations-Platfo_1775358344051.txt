@@ -1,0 +1,17 @@
+Your Personalised Case Study
+
+Pharmacy Operations Platform for AsterVale HealthMart
+AsterVale HealthMart is a fast-growing regional pharmacy and wellness retail chain operating across urban and semi-urban locations in South India. The company is seeking a modern, cloud-ready web application to centralize and automate its end-to-end store operations across 18 outlets, with plans to expand to 40+ locations within 18 months. The platform should support secure authentication and role-based access control for administrators, pharmacists, regional supervisors, and inventory staff, ensuring each user can only access the functions relevant to their role. Core capabilities must include product and batch inventory management, prescription and over-the-counter sales, invoice generation, expiry and low-stock monitoring, purchase and replenishment workflows, and business intelligence dashboards for store performance, margin tracking, and demand trends. In addition to operational workflows, the solution should include agentic AI features to improve decision-making and reduce manual effort. These should cover intelligent replenishment recommendations, anomaly detection for suspicious transactions or abnormal stock movement, and a conversational interface that allows users to query sales, inventory, and profitability data in natural language. The system must be built using a Python-based technology stack with PostgreSQL as the primary database and follow a clear microservices architecture suitable for modular development and independent scaling. The implementation should address non-functional requirements expected in a production retail environment, including high availability during peak hours, fast response times for common workflows, secure handling of sensitive business data, auditability, observability through logs/metrics/traces, and resilience against partial service failures. The candidate should also apply compliant AI-assisted development guardrails, such as safe prompt handling, explanation of AI outputs, and controls to prevent unauthorized data exposure or unsafe automation.
+
+Expected Deliverables:
+A production-ready design and implementation of a microservices-based pharmacy store management web application, including source code, database schema, API contracts, authentication and RBAC, inventory/sales/replenishment modules, BI dashboards, AI-assisted features, deployment guidance, and documentation.
+
+Evaluation Criteria:
+Correct implementation of secure authentication and role-based access control for multiple user types
+Well-structured microservices architecture with clear service boundaries and scalable design
+Accurate inventory, sales, invoicing, batch, expiry, and replenishment workflows
+Effective PostgreSQL data modeling with integrity, auditability, and query performance in mind
+Meaningful business intelligence reporting with actionable store and sales insights
+Useful agentic AI capabilities for recommendations, anomaly detection, and conversational querying
+Adherence to performance, scalability, reliability, observability, and security best practices
+Appropriate safeguards for compliant AI-assisted development and safe handling of business data
